@@ -1,0 +1,371 @@
+<!doctype html><html lang="es"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover"><style>:root{padding-top:env(safe-area-inset-top);padding-bottom:env(safe-area-inset-bottom)}body{margin:0}img{max-width:100%}[hidden]{display:none!important}</style><title>Nuestro Álbum</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Caveat:wght@500;700&family=Figtree:wght@400;500;600&family=Gloock&display=swap">
+<style id="app-style">
+/* Layout: álbum de recortes — polaroids con cinta adhesiva sobre papel rosado, notas escritas a mano entre fotos */
+:root{
+  --paper:#f5e3e3; --paper-dot:#e7c6ca; --ink:#3b1f2b; --muted:#85596a;
+  --accent:#b3264f; --accent-ink:#fff6f8; --polaroid:#fffdfa; --polaroid-ink:#2c1a21;
+  --note:#fff3c9; --note-2:#ffe0e8; --tape:rgba(255,236,190,.78); --line:#e2bfc6;
+  --shadow:0 1px 2px rgba(60,20,35,.12),0 8px 22px rgba(60,20,35,.16);
+  --sheet:#fffafa;
+  --f-display:"Gloock",Georgia,"Times New Roman",serif;
+  --f-hand:"Caveat","Segoe Print","Bradley Hand",cursive;
+  --f-body:"Figtree",system-ui,-apple-system,"Segoe UI",sans-serif;
+}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){
+  --paper:#22121a; --paper-dot:#3a2129; --ink:#f7e7ec; --muted:#c79eac;
+  --accent:#ff7ba3; --accent-ink:#2a0f19; --polaroid:#f6f0ea; --polaroid-ink:#2c1a21;
+  --note:#f3e3b0; --note-2:#f5cfda; --tape:rgba(240,220,170,.62); --line:#4a2a35;
+  --shadow:0 1px 2px rgba(0,0,0,.4),0 10px 26px rgba(0,0,0,.5); --sheet:#2c1820; color-scheme:dark}}
+:root[data-theme="dark"]{
+  --paper:#22121a; --paper-dot:#3a2129; --ink:#f7e7ec; --muted:#c79eac;
+  --accent:#ff7ba3; --accent-ink:#2a0f19; --polaroid:#f6f0ea; --polaroid-ink:#2c1a21;
+  --note:#f3e3b0; --note-2:#f5cfda; --tape:rgba(240,220,170,.62); --line:#4a2a35;
+  --shadow:0 1px 2px rgba(0,0,0,.4),0 10px 26px rgba(0,0,0,.5); --sheet:#2c1820; color-scheme:dark}
+
+body{background:var(--paper);color:var(--ink);font-family:var(--f-body);font-size:15px;line-height:1.5;
+  background-image:radial-gradient(var(--paper-dot) 1px,transparent 1.4px);background-size:22px 22px;}
+*{box-sizing:border-box}
+button{font:inherit;color:inherit;cursor:pointer}
+button:focus-visible,input:focus-visible,textarea:focus-visible,.card:focus-visible{outline:3px solid var(--accent);outline-offset:3px}
+.wrap{max-width:1080px;margin:0 auto;padding-block:28px 120px;
+  padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px))}
+
+/* hero */
+.hero{display:grid;gap:10px;justify-items:center;text-align:center;padding-block:18px 26px}
+.eyebrow{font-size:12px;letter-spacing:.18em;text-transform:uppercase;color:var(--muted);font-weight:600}
+.hero h1{font-family:var(--f-display);font-weight:400;font-size:clamp(44px,11vw,88px);line-height:.95;margin:0;text-wrap:balance}
+.names{font-family:var(--f-hand);font-size:clamp(28px,6vw,38px);color:var(--accent);line-height:1}
+.counter{font-size:14px;color:var(--muted);font-variant-numeric:tabular-nums}
+.counter b{font-family:var(--f-display);font-weight:400;font-size:26px;color:var(--ink);margin-inline:4px}
+.actions{display:flex;flex-wrap:wrap;gap:10px;justify-content:center;margin-top:8px}
+.btn{border:1.5px solid var(--ink);background:transparent;border-radius:999px;padding:9px 18px;font-weight:600;font-size:14px;display:inline-flex;align-items:center;gap:8px}
+.btn.solid{background:var(--accent);border-color:var(--accent);color:var(--accent-ink)}
+.btn svg{width:16px;height:16px}
+
+/* grid */
+.board{display:grid;grid-template-columns:repeat(auto-fill,minmax(min(46%,210px),1fr));gap:34px 22px;align-items:start;padding-top:10px}
+@media (max-width:420px){.board{gap:26px 14px}}
+.card{position:relative;transform:rotate(var(--tilt,0deg));transition:transform .25s ease;min-width:0}
+.card:hover{transform:rotate(0deg) scale(1.03);z-index:2}
+.polaroid{background:var(--polaroid);padding:9px 9px 0;box-shadow:var(--shadow);border-radius:2px;color:var(--polaroid-ink)}
+.photo{aspect-ratio:1/1;max-width:100%;width:100%;overflow:hidden;background:#d9c7c0;position:relative}
+.photo img{width:100%;height:100%;object-fit:cover;display:block;animation:develop 2.4s ease-out both}
+@keyframes develop{from{filter:sepia(.9) brightness(1.35) contrast(.6) saturate(.4)}to{filter:none}}
+.ph{position:absolute;inset:0;background:linear-gradient(180deg,#f7b7c4 0%,#f9d2b5 55%,#e6a39b 56%,#c9787c 100%)}
+.ph::before{content:"";position:absolute;width:30%;aspect-ratio:1;border-radius:50%;background:#fff1d6;left:35%;top:30%;opacity:.9}
+.ph span{position:absolute;left:8px;top:8px;font-size:10px;letter-spacing:.12em;text-transform:uppercase;background:rgba(255,255,255,.75);color:#6b3343;padding:2px 6px;border-radius:3px;font-weight:600}
+.cap{font-family:var(--f-hand);font-size:22px;line-height:1.1;padding:10px 4px 6px;min-height:52px;text-align:center;overflow-wrap:anywhere}
+.date{display:block;font-family:var(--f-body);font-size:11px;letter-spacing:.06em;color:#8b6b74;margin-top:2px;padding-bottom:8px;text-align:center;font-variant-numeric:tabular-nums}
+.tape{position:absolute;top:-12px;left:50%;width:84px;height:24px;background:var(--tape);transform:translateX(-50%) rotate(-3deg);box-shadow:0 1px 2px rgba(0,0,0,.08);z-index:1}
+.tape.r{transform:translateX(-50%) rotate(4deg)}
+.note{background:var(--note);color:#3d2a1d;padding:22px 18px 20px;box-shadow:var(--shadow);font-family:var(--f-hand);font-size:25px;line-height:1.15;text-align:center;overflow-wrap:anywhere;
+  background-image:repeating-linear-gradient(transparent 0 27px,rgba(150,100,60,.14) 27px 28px)}
+.note.pink{background-color:var(--note-2);color:#4a1f2c}
+.note .heart{display:block;margin:0 auto 6px;width:20px;height:20px;color:var(--accent)}
+.note.pink .heart{color:#b3264f}
+.note.yellow .heart{color:#b3264f}
+
+/* edit tools on cards */
+.tools{display:none;position:absolute;right:-6px;top:-14px;z-index:3;gap:4px}
+body.editing .tools{display:flex}
+.tool{width:32px;height:32px;border-radius:50%;border:none;background:var(--ink);color:var(--paper);display:grid;place-items:center;box-shadow:0 2px 6px rgba(0,0,0,.25)}
+.tool svg{width:15px;height:15px}
+.tool.del{background:#a3122e;color:#fff}
+body.editing .card{cursor:pointer}
+
+.addrow{display:none;gap:10px;justify-content:center;flex-wrap:wrap;margin-top:34px}
+body.editing .addrow{display:flex}
+
+/* save bar */
+.savebar{position:fixed;left:0;right:0;bottom:0;z-index:20;display:none;align-items:center;justify-content:center;gap:12px;flex-wrap:wrap;
+  background:var(--ink);color:var(--paper);padding-block:12px calc(12px + env(safe-area-inset-bottom,0px));
+  padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px));font-size:14px}
+body.editing .savebar{display:flex}
+.savebar .btn{border-color:var(--paper);color:var(--paper)}
+.savebar .btn.solid{background:var(--accent);border-color:var(--accent);color:var(--accent-ink)}
+
+/* overlays */
+.overlay{position:fixed;inset:0;z-index:30;background:rgba(25,8,15,.72);display:flex;align-items:center;justify-content:center;
+  padding:calc(16px + env(safe-area-inset-top,0px)) max(16px,env(safe-area-inset-right,0px)) calc(16px + env(safe-area-inset-bottom,0px)) max(16px,env(safe-area-inset-left,0px))}
+.lb{display:grid;gap:14px;justify-items:center;width:min(440px,100%)}
+.flip{perspective:1400px;width:100%;cursor:pointer}
+.flip-in{position:relative;transition:transform .7s cubic-bezier(.3,.8,.3,1);transform-style:preserve-3d}
+.flip.on .flip-in{transform:rotateY(180deg)}
+.face{backface-visibility:hidden;-webkit-backface-visibility:hidden}
+.back{position:absolute;inset:0;transform:rotateY(180deg);background:var(--polaroid);color:var(--polaroid-ink);display:grid;place-items:center;padding:28px;text-align:center;
+  font-family:var(--f-hand);font-size:clamp(26px,7vw,34px);line-height:1.15;box-shadow:var(--shadow);
+  background-image:repeating-linear-gradient(transparent 0 33px,rgba(120,60,80,.12) 33px 34px)}
+.back small{display:block;font-family:var(--f-body);font-size:12px;color:#8b6b74;margin-top:14px;letter-spacing:.06em}
+.lb .polaroid{padding:12px 12px 0}
+.lb .cap{font-size:30px}
+.lb-nav{display:flex;gap:12px;align-items:center;color:#fbe9ee;font-size:13px}
+.lb-nav .btn{border-color:#fbe9ee;color:#fbe9ee}
+.hint{color:#e9c6d1;font-size:13px}
+
+.sheet{background:var(--sheet);color:var(--ink);width:min(480px,100%);max-height:100%;overflow:auto;border-radius:14px;padding:22px;display:grid;gap:14px;box-shadow:0 20px 60px rgba(0,0,0,.4)}
+.sheet h2{font-family:var(--f-display);font-weight:400;font-size:28px;margin:0}
+.field{display:grid;gap:6px}
+.field label{font-size:12px;letter-spacing:.1em;text-transform:uppercase;color:var(--muted);font-weight:600}
+.field input,.field textarea{font:inherit;color:var(--ink);background:var(--paper);border:1.5px solid var(--line);border-radius:8px;padding:10px 12px;width:100%}
+.field textarea{min-height:90px;resize:vertical;font-family:var(--f-hand);font-size:22px;line-height:1.2}
+.field .hand{font-family:var(--f-hand);font-size:22px}
+.preview{width:120px;aspect-ratio:1;object-fit:cover;border-radius:4px;background:var(--paper)}
+.photo-row{display:flex;gap:12px;align-items:center;flex-wrap:wrap}
+.sheet-actions{display:flex;gap:10px;justify-content:flex-end;flex-wrap:wrap}
+.confirm{background:var(--note-2);color:#4a1f2c;border-radius:8px;padding:12px;font-size:14px;display:grid;gap:10px}
+.small{font-size:13px;color:var(--muted)}
+
+.toast{position:fixed;left:50%;bottom:calc(84px + env(safe-area-inset-bottom,0px));transform:translateX(-50%);z-index:40;background:var(--accent);color:var(--accent-ink);padding:10px 18px;border-radius:999px;font-weight:600;font-size:14px;box-shadow:var(--shadow);max-width:calc(100% - 32px);text-align:center}
+
+.float-heart{position:fixed;z-index:50;pointer-events:none;color:var(--accent);animation:rise 1.6s ease-out forwards}
+@keyframes rise{from{opacity:1;transform:translate(0,0) scale(.6)}to{opacity:0;transform:translate(var(--dx),-180px) scale(1.3)}}
+
+footer{text-align:center;margin-top:46px;font-family:var(--f-hand);font-size:24px;color:var(--muted)}
+
+@media (prefers-reduced-motion:reduce){
+  .photo img{animation:none}.flip-in,.card{transition:none}.float-heart{display:none}
+}
+</style>
+</head><body><div id="app"></div>
+<script type="application/json" id="album-data">{"title": "Nuestro álbum", "names": "Esteban & mi amor", "since": "", "savedAt": 1791951339414, "items": [{"id": "f2", "type": "photo", "src": "fotos/foto2.jpg", "assetId": "7f2e21a5de40ee07a7aeb66f1c3de632", "caption": "", "date": "", "back": ""}, {"id": "n1", "type": "note", "text": "Contigo aprendí que los días normales también pueden ser los favoritos.", "color": "yellow"}, {"id": "f3", "type": "photo", "src": "fotos/foto3.jpg", "assetId": "a6531f106d9ab02da0586e44d3d3b5d8", "caption": "", "date": "", "back": ""}, {"id": "f4", "type": "photo", "src": "fotos/foto4.jpg", "assetId": "39665f57e696f0dcd519de43c23332e9", "caption": "", "date": "", "back": ""}, {"id": "n2", "type": "note", "text": "Si tuviera que elegir otra vez, te elegiría en todas las versiones de mi vida.", "color": "pink"}, {"id": "v1", "type": "photo", "video": true, "src": "fotos/video1.mp4", "assetId": "4a5d53f03ec7bfffde9e66b2b022baa4", "caption": "", "date": "", "back": ""}, {"id": "f5", "type": "photo", "src": "fotos/foto5.jpg", "assetId": "53cb827728eb651b852290ae91af7882", "caption": "", "date": "", "back": ""}, {"id": "n3", "type": "note", "text": "Te quiero en los días buenos, y te quiero más en los difíciles.", "color": "yellow"}, {"id": "f1", "type": "photo", "src": "fotos/foto1.jpg", "assetId": "ad678f61e47c69ed7813d0f29d1fc8f8", "caption": "", "date": "", "back": ""}]}</script>
+<script id="app-script">
+(function(){
+var PHRASES=["Contigo aprendí que los días normales también pueden ser los favoritos.","Si tuviera que elegir otra vez, te elegiría en todas las versiones de mi vida.","Mi lugar favorito no está en un mapa: está a tu lado.","Tu risa es mi canción preferida, y nunca me canso de repetirla.","No sé qué nos depara el futuro, pero sé que lo quiero contigo.","Cada foto es una excusa para recordarte, aunque nunca dejo de hacerlo.","Eres la casualidad más bonita que me pasó.","Gracias por hacer de lo simple algo extraordinario.","Te quiero en los días buenos, y te quiero más en los difíciles.","Si el amor se pudiera revelar como una foto, saldría con tu cara.","Contigo el tiempo pasa rápido, pero los momentos se quedan para siempre.","Me gustas en todas tus versiones: la dormida, la despeinada y la que me roba la comida.","Quiero llenar mil álbumes más contigo.","Eres mi persona favorita para no hacer nada.","A tu lado, hasta el silencio se siente bonito."];
+var DRAFT_KEY="album-draft-v1";
+var state=JSON.parse(document.getElementById("album-data").textContent);
+var editing=false, dirty=false, artifactApi=null, assetsApi=null;
+var lbIndex=-1, flipped=false;
+
+try{var d=JSON.parse(localStorage.getItem(DRAFT_KEY)||"null");if(d&&d.draftAt>(state.savedAt||0)){state=d.state;dirty=true;editing=true;}}catch(e){}
+
+var ICON={
+ heart:'<svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M12 21s-7.5-4.6-9.6-9.2C.9 8.5 2.9 4.5 6.7 4.5c2.2 0 3.6 1.2 5.3 3.1 1.7-1.9 3.1-3.1 5.3-3.1 3.8 0 5.8 4 4.3 7.3C19.5 16.4 12 21 12 21z"/></svg>',
+ edit:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 20h4L19 9l-4-4L4 16z"/></svg>',
+ left:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M15 5l-7 7 7 7"/></svg>',
+ right:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9 5l7 7-7 7"/></svg>',
+ trash:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 7h16M9 7V4h6v3M6 7l1 13h10l1-13"/></svg>',
+ plus:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" aria-hidden="true"><path d="M12 5v14M5 12h14"/></svg>',
+ pen:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 20h4L19 9l-4-4L4 16z"/></svg>'
+};
+function esc(s){return String(s==null?"":s).replace(/[&<>"']/g,function(c){return {"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c];});}
+function tilt(id){var h=0;for(var i=0;i<id.length;i++)h=(h*31+id.charCodeAt(i))|0;return ((Math.abs(h)%9)-4)*0.9;}
+function uid(){return "i"+Date.now().toString(36)+Math.random().toString(36).slice(2,6);}
+function fmtDate(s){if(!s)return "";var p=s.split("-");if(p.length!==3)return s;var m=["ene","feb","mar","abr","may","jun","jul","ago","sep","oct","nov","dic"];return (+p[2])+" "+m[+p[1]-1]+" "+p[0];}
+function daysSince(s){if(!s)return null;var t=new Date(s+"T00:00:00");if(isNaN(t))return null;return Math.max(0,Math.floor((Date.now()-t.getTime())/864e5));}
+function media(it,lazy,lb){if(!it.src)return '<div class="ph"><span>Ejemplo</span></div>';if(it.video)return '<video src="'+esc(it.src)+'" muted loop playsinline autoplay'+(lb?' controls':'')+' style="width:100%;height:100%;object-fit:'+(lb?'contain;background:#111':'cover;object-position:50% 35%')+';display:block"></video>';return '<img src="'+esc(it.src)+'" alt="'+esc(it.caption||"Foto")+'"'+(lazy?' loading="lazy"':'')+'>';}
+function photos(){return state.items.filter(function(i){return i.type==="photo";});}
+
+function markDirty(){dirty=true;try{localStorage.setItem(DRAFT_KEY,JSON.stringify({draftAt:Date.now(),state:state}));}catch(e){}renderBar();}
+
+function render(){
+  document.title=state.title||"Nuestro álbum";
+  document.body.classList.toggle("editing",editing);
+  var days=daysSince(state.since);
+  var h='<main class="wrap"><header class="hero">'+
+   '<div class="eyebrow">Álbum de fotos</div>'+
+   '<h1>'+esc(state.title)+'</h1>'+
+   '<div class="names">'+esc(state.names)+'</div>'+
+   (days!==null?'<div class="counter">Llevamos<b>'+days.toLocaleString("es")+'</b>días juntos</div>':(editing?'<div class="counter">Pon la fecha en que empezó todo y aquí aparecerán los días juntos.</div>':''))+
+   '<div class="actions"><button class="btn solid" id="b-phrase">'+ICON.heart+' Una frase para ti</button>'+
+   (artifactApi?'<button class="btn" id="b-edit">'+ICON.pen+(editing?' Terminar de editar':' Editar álbum')+'</button>':'')+
+   (editing?'<button class="btn" id="b-hero">Título y fecha</button>':'')+
+   '</div></header><section class="board" id="board">';
+  state.items.forEach(function(it,idx){
+    var tools='<div class="tools">'+
+      '<button class="tool" data-act="left" data-i="'+idx+'" aria-label="Mover antes">'+ICON.left+'</button>'+
+      '<button class="tool" data-act="right" data-i="'+idx+'" aria-label="Mover después">'+ICON.right+'</button>'+
+      '<button class="tool" data-act="edit" data-i="'+idx+'" aria-label="Editar">'+ICON.edit+'</button></div>';
+    var tl=tilt(it.id);
+    if(it.type==="photo"){
+      var img=media(it,true,false);
+      h+='<article class="card" tabindex="0" style="--tilt:'+tl+'deg" data-i="'+idx+'">'+tools+
+        '<div class="tape'+(tl>0?' r':'')+'"></div><div class="polaroid"><div class="photo">'+img+'</div>'+
+        '<div class="cap">'+esc(it.caption)+'</div>'+(it.date?'<span class="date">'+fmtDate(it.date)+'</span>':'<span class="date">&nbsp;</span>')+'</div></article>';
+    }else{
+      h+='<article class="card" style="--tilt:'+(tl*-1)+'deg" data-i="'+idx+'">'+tools+
+        '<div class="note '+(it.color==="pink"?"pink":"yellow")+'"><span class="heart">'+ICON.heart+'</span>'+esc(it.text)+'</div></article>';
+    }
+  });
+  h+='</section><div class="addrow"><button class="btn solid" id="b-addphoto">'+ICON.plus+' Agregar fotos</button>'+
+    '<button class="btn" id="b-addnote">'+ICON.plus+' Agregar frase</button>'+
+    '<input type="file" id="f-multi" accept="image/*" multiple hidden></div>'+
+    '<footer>hecho con amor, foto a foto</footer></main>'+
+    '<div class="savebar" id="savebar"></div>';
+  document.getElementById("app").innerHTML=h;
+  renderBar();
+}
+function renderBar(){
+  var b=document.getElementById("savebar");if(!b)return;
+  b.innerHTML='<span>'+(dirty?'Tienes cambios sin guardar':'Todo guardado')+'</span>'+
+   '<button class="btn solid" id="b-save"'+(dirty?'':' disabled')+'>Guardar cambios</button>';
+}
+
+/* --- toasts & hearts --- */
+function toast(msg){var t=document.createElement("div");t.className="toast";t.textContent=msg;document.body.appendChild(t);setTimeout(function(){t.remove();},2800);}
+function hearts(x,y){for(var i=0;i<9;i++){var s=document.createElement("span");s.className="float-heart";s.innerHTML=ICON.heart;var sz=14+Math.random()*16;
+  s.style.cssText="left:"+(x-sz/2+(Math.random()*40-20))+"px;top:"+(y-sz/2)+"px;width:"+sz+"px;height:"+sz+"px;--dx:"+(Math.random()*120-60)+"px;animation-delay:"+(i*60)+"ms";
+  document.body.appendChild(s);setTimeout(function(n){return function(){n.remove();};}(s),2400);}}
+
+/* --- overlays --- */
+var overlay=null;
+function closeOverlay(){if(overlay){overlay.remove();overlay=null;}document.removeEventListener("keydown",onKey);}
+function openOverlay(html){closeOverlay();overlay=document.createElement("div");overlay.className="overlay";overlay.innerHTML=html;
+  overlay.addEventListener("click",function(e){if(e.target===overlay)closeOverlay();});document.body.appendChild(overlay);document.addEventListener("keydown",onKey);return overlay;}
+function onKey(e){if(e.key==="Escape")closeOverlay();if(lbIndex>=0){if(e.key==="ArrowRight")lbStep(1);if(e.key==="ArrowLeft")lbStep(-1);}}
+
+function phraseNote(){
+  var p=PHRASES[Math.floor(Math.random()*PHRASES.length)];
+  var o=openOverlay('<div class="lb"><div class="note pink" style="transform:rotate(-2deg);width:100%;font-size:32px;padding:34px 24px"><span class="heart">'+ICON.heart+'</span>'+esc(p)+'</div>'+
+   '<div class="lb-nav"><button class="btn" id="o-again">Otra frase</button><button class="btn" id="o-close">Cerrar</button></div></div>');
+  o.querySelector("#o-again").onclick=function(e){phraseNote();hearts(e.clientX,e.clientY);};
+  o.querySelector("#o-close").onclick=closeOverlay;
+}
+
+function openLightbox(pi){
+  var ps=photos();if(!ps.length)return;lbIndex=(pi+ps.length)%ps.length;flipped=false;var it=ps[lbIndex];
+  var img=media(it,false,true);
+  var hasBack=!!it.back;var o=openOverlay('<div class="lb"><div class="flip" id="flip"'+(hasBack?' role="button" tabindex="0" aria-label="Voltear la foto"':' style="cursor:default"')+'>'+
+   '<div class="flip-in"><div class="face polaroid"><div class="photo">'+img+'</div><div class="cap">'+esc(it.caption)+'</div><span class="date">'+(fmtDate(it.date)||"&nbsp;")+'</span></div>'+
+   '<div class="face back"><div>'+esc(it.back)+'<small>'+esc(state.names)+'</small></div></div></div></div>'+
+   (hasBack?'<div class="hint">Toca la foto para leer lo que hay detrás</div>':'')+
+   '<div class="lb-nav"><button class="btn" id="o-prev" aria-label="Foto anterior">'+ICON.left+'</button><span>'+(lbIndex+1)+' / '+ps.length+'</span>'+
+   '<button class="btn" id="o-next" aria-label="Foto siguiente">'+ICON.right+'</button><button class="btn" id="o-close">Cerrar</button></div></div>');
+  var f=o.querySelector("#flip");
+  function flip(e){flipped=!flipped;f.classList.toggle("on",flipped);if(flipped){var r=f.getBoundingClientRect();hearts(e&&e.clientX?e.clientX:r.left+r.width/2,e&&e.clientY?e.clientY:r.top+r.height/2);}}
+  if(hasBack){f.onclick=flip;}else{flip=function(){};}f.onkeydown=function(e){if(e.key==="Enter"||e.key===" "){e.preventDefault();flip();}};
+  o.querySelector("#o-prev").onclick=function(){lbStep(-1);};
+  o.querySelector("#o-next").onclick=function(){lbStep(1);};
+  o.querySelector("#o-close").onclick=function(){lbIndex=-1;closeOverlay();};
+  var sx=null;f.addEventListener("touchstart",function(e){sx=e.touches[0].clientX;},{passive:true});
+  f.addEventListener("touchend",function(e){if(sx===null)return;var dx=e.changedTouches[0].clientX-sx;sx=null;if(Math.abs(dx)>50){e.preventDefault();lbStep(dx<0?1:-1);}});
+}
+function lbStep(d){openLightbox(lbIndex+d);}
+
+/* --- images --- */
+function loadImage(file){return new Promise(function(res,rej){var u=URL.createObjectURL(file);var im=new Image();im.onload=function(){res(im);};im.onerror=function(){URL.revokeObjectURL(u);rej(new Error("decode"));};im.src=u;});}
+function shrink(file,max,q){return loadImage(file).then(function(im){var s=Math.min(1,max/Math.max(im.naturalWidth,im.naturalHeight));var c=document.createElement("canvas");c.width=Math.round(im.naturalWidth*s);c.height=Math.round(im.naturalHeight*s);
+  c.getContext("2d").drawImage(im,0,0,c.width,c.height);return c;});}
+function storePhoto(file){
+  return (assetsApi?shrink(file,1800,.86).then(function(c){return new Promise(function(r){c.toBlob(r,"image/jpeg",.86);});}).then(function(blob){return assetsApi.upload(blob);}).then(function(r){return {src:r.url,assetId:r.id};})
+    :Promise.reject({code:"none"})).catch(function(err){
+      if(err&&err.message==="decode")throw err;
+      return shrink(file,900,.8).then(function(c){return {src:c.toDataURL("image/jpeg",.8)};});
+    });
+}
+
+/* --- editors --- */
+function editHero(){
+  var o=openOverlay('<div class="sheet" role="dialog" aria-label="Título y fecha"><h2>Portada</h2>'+
+   '<div class="field"><label for="h-title">Título</label><input id="h-title" value="'+esc(state.title)+'"></div>'+
+   '<div class="field"><label for="h-names">Sus nombres</label><input id="h-names" class="hand" value="'+esc(state.names)+'"></div>'+
+   '<div class="field"><label for="h-since">Fecha en que empezó todo</label><input id="h-since" type="date" value="'+esc(state.since)+'"></div>'+
+   '<div class="sheet-actions"><button class="btn" id="s-cancel">Cancelar</button><button class="btn solid" id="s-ok">Listo</button></div></div>');
+  o.querySelector("#s-cancel").onclick=closeOverlay;
+  o.querySelector("#s-ok").onclick=function(){state.title=o.querySelector("#h-title").value.trim()||"Nuestro álbum";state.names=o.querySelector("#h-names").value.trim();state.since=o.querySelector("#h-since").value;closeOverlay();markDirty();render();};
+}
+function editItem(idx){
+  var it=state.items[idx];if(!it)return;var pending=null;
+  var isP=it.type==="photo";
+  var body=isP?
+   '<div class="field"><label>Foto</label><div class="photo-row">'+(it.src?(it.video?'<video class="preview" id="e-prev" src="'+esc(it.src)+'" muted autoplay loop playsinline></video>':'<img class="preview" id="e-prev" src="'+esc(it.src)+'" alt="">'):'<div class="preview ph" id="e-prev" style="position:relative;width:120px"></div>')+
+     '<div style="display:grid;gap:6px"><button class="btn" id="e-pick">'+(it.src?'Cambiar foto':'Elegir foto')+'</button><span class="small" id="e-status"></span></div>'+
+     '<input type="file" id="e-file" accept="image/*" hidden></div></div>'+
+   '<div class="field"><label for="e-cap">Pie de foto</label><input id="e-cap" class="hand" maxlength="60" value="'+esc(it.caption)+'"></div>'+
+   '<div class="field"><label for="e-date">Fecha</label><input id="e-date" type="date" value="'+esc(it.date)+'"></div>'+
+   '<div class="field"><label for="e-back">Frase escrita detrás</label><textarea id="e-back">'+esc(it.back)+'</textarea>'+
+     '<button class="btn" id="e-idea" style="justify-self:start">Sugerir una frase</button></div>'
+  :'<div class="field"><label for="e-text">Frase</label><textarea id="e-text">'+esc(it.text)+'</textarea>'+
+     '<button class="btn" id="e-idea" style="justify-self:start">Sugerir una frase</button></div>'+
+   '<div class="field"><label>Color de la nota</label><div class="photo-row"><button class="btn" id="c-yellow">Amarilla</button><button class="btn" id="c-pink">Rosada</button></div></div>';
+  var o=openOverlay('<div class="sheet" role="dialog" aria-label="Editar"><h2>'+(isP?'Editar foto':'Editar frase')+'</h2>'+body+
+   '<div id="e-confirm"></div><div class="sheet-actions"><button class="btn" id="e-del" style="margin-right:auto">'+ICON.trash+' Quitar</button><button class="btn" id="s-cancel">Cancelar</button><button class="btn solid" id="s-ok">Listo</button></div></div>');
+  var color=it.color||"yellow";
+  o.querySelector("#e-idea").onclick=function(){var t=o.querySelector(isP?"#e-back":"#e-text");t.value=PHRASES[Math.floor(Math.random()*PHRASES.length)];};
+  if(!isP){o.querySelector("#c-yellow").onclick=function(){color="yellow";};o.querySelector("#c-pink").onclick=function(){color="pink";};}
+  if(isP){
+    var fi=o.querySelector("#e-file"),st=o.querySelector("#e-status");
+    o.querySelector("#e-pick").onclick=function(){fi.click();};
+    fi.onchange=function(){var f=fi.files[0];if(!f)return;st.textContent="Subiendo foto…";
+      storePhoto(f).then(function(r){pending=r;var p=o.querySelector("#e-prev");var im=document.createElement("img");im.className="preview";im.id="e-prev";im.src=r.src;im.alt="";p.replaceWith(im);st.textContent="Foto lista";})
+      .catch(function(){st.textContent="No se pudo abrir esa imagen. Prueba con una foto JPG o PNG.";});};
+  }
+  o.querySelector("#e-del").onclick=function(){
+    o.querySelector("#e-confirm").innerHTML='<div class="confirm">¿Quitar '+(isP?'esta foto':'esta frase')+' del álbum?<div class="sheet-actions"><button class="btn" id="d-no">No</button><button class="btn solid" id="d-yes">Sí, quitar</button></div></div>';
+    o.querySelector("#d-no").onclick=function(){o.querySelector("#e-confirm").innerHTML="";};
+    o.querySelector("#d-yes").onclick=function(){state.items.splice(idx,1);closeOverlay();markDirty();render();};
+  };
+  o.querySelector("#s-cancel").onclick=closeOverlay;
+  o.querySelector("#s-ok").onclick=function(){
+    if(isP){if(pending){it.video=false;it.src=pending.src;it.assetId=pending.assetId||null;it.sample=false;}
+      it.caption=o.querySelector("#e-cap").value.trim();it.date=o.querySelector("#e-date").value;it.back=o.querySelector("#e-back").value.trim();}
+    else{it.text=o.querySelector("#e-text").value.trim()||it.text;it.color=color;}
+    closeOverlay();markDirty();render();
+  };
+}
+function addPhotos(files){
+  files=Array.prototype.slice.call(files);if(!files.length)return;toast("Subiendo "+files.length+(files.length>1?" fotos…":" foto…"));
+  var chain=Promise.resolve(),ok=0;
+  files.forEach(function(f){chain=chain.then(function(){return storePhoto(f).then(function(r){
+    state.items.push({id:uid(),type:"photo",src:r.src,assetId:r.assetId||null,caption:"",date:"",back:PHRASES[Math.floor(Math.random()*PHRASES.length)]});ok++;}).catch(function(){});});});
+  chain.then(function(){markDirty();render();toast(ok===files.length?"Fotos agregadas. Toca el lápiz para escribirles algo.":"Se agregaron "+ok+" de "+files.length+"; algunas no se pudieron abrir.");});
+}
+
+/* --- save (republish the page from state) --- */
+function buildDoc(){
+  var reset=(document.head.querySelector("style")||{}).textContent||"";
+  var css=document.getElementById("app-style").textContent;
+  var js=document.getElementById("app-script").textContent;
+  var data=JSON.stringify(state).replace(/</g,"\\u003c");
+  var S="script";
+  return '<!doctype html><html><head><meta charset=utf8><meta name=viewport content="width=device-width,initial-scale=1,viewport-fit=cover"><style>'+reset+'</style></head><body>'+
+   '<title>'+esc(state.title||"Nuestro álbum")+'</title>\n<meta name="claude:viewport-fit-sides" content="cover">\n'+
+   '<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Caveat:wght@500;700&family=Figtree:wght@400;500;600&family=Gloock&display=swap">\n'+
+   '<style id="app-style">'+css+'</style>\n<div id="app"></div>\n'+
+   '<'+S+' type="application/json" id="album-data">'+data+'</'+S+'>\n'+
+   '<'+S+' id="app-script">'+js+'</'+S+'>\n</body></html>';
+}
+function save(){
+  if(!artifactApi||!dirty)return;var b=document.getElementById("b-save");if(b){b.disabled=true;b.textContent="Guardando…";}
+  state.savedAt=Date.now();
+  artifactApi.publish(buildDoc()).then(function(){try{localStorage.removeItem(DRAFT_KEY);}catch(e){}dirty=false;renderBar();toast("Álbum guardado");})
+  .catch(function(err){var c=err&&err.code;
+    if(c==="conflict"){toast("El álbum cambió en otra ventana; se recargará con esa versión.");}
+    else if(c==="not_writer"||c==="not_granted"){toast("Solo quien puede editar el álbum puede guardar cambios.");}
+    else if(c==="too_large"){toast("El álbum quedó muy pesado. Quita algunas fotos e intenta de nuevo.");}
+    else toast("No se pudo guardar. Tus cambios siguen aquí; intenta de nuevo.");
+    renderBar();});
+}
+
+/* --- events --- */
+document.addEventListener("click",function(e){
+  var t=e.target.closest("button,.card");if(!t)return;
+  if(t.id==="b-phrase"){phraseNote();hearts(e.clientX,e.clientY);return;}
+  if(t.id==="b-edit"){editing=!editing;render();return;}
+  if(t.id==="b-hero"){editHero();return;}
+  if(t.id==="b-save"){save();return;}
+  if(t.id==="b-addphoto"){document.getElementById("f-multi").click();return;}
+  if(t.id==="b-addnote"){state.items.push({id:uid(),type:"note",text:PHRASES[Math.floor(Math.random()*PHRASES.length)],color:Math.random()<.5?"pink":"yellow"});markDirty();render();editItem(state.items.length-1);return;}
+  var act=t.getAttribute("data-act");
+  if(act){e.stopPropagation();var i=+t.getAttribute("data-i");
+    if(act==="edit")editItem(i);
+    if(act==="left"&&i>0){var a=state.items.splice(i,1)[0];state.items.splice(i-1,0,a);markDirty();render();}
+    if(act==="right"&&i<state.items.length-1){var b=state.items.splice(i,1)[0];state.items.splice(i+1,0,b);markDirty();render();}
+    return;}
+  if(t.classList.contains("card")){var idx=+t.getAttribute("data-i");var it=state.items[idx];
+    if(editing){editItem(idx);return;}
+    if(it.type==="photo"){openLightbox(photos().indexOf(it));}else{var r=t.getBoundingClientRect();hearts(r.left+r.width/2,r.top+20);}}
+});
+document.addEventListener("keydown",function(e){var t=e.target;if(t.classList&&t.classList.contains("card")&&(e.key==="Enter"||e.key===" ")){e.preventDefault();t.click();}});
+document.addEventListener("change",function(e){if(e.target.id==="f-multi"){addPhotos(e.target.files);e.target.value="";}});
+window.addEventListener("beforeunload",function(){});
+
+render();
+if(window.claude&&window.claude.use){
+  window.claude.use("artifact").then(function(a){artifactApi=a;if(a)render();}).catch(function(){});
+  window.claude.use("assets").then(function(a){assetsApi=a;}).catch(function(){});
+}
+})();
+</script>
+</body></html>
